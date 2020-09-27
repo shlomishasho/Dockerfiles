@@ -1,0 +1,14 @@
+version: "3"
+services:
+  spark-worker:
+    image: gettyimages/spark:latest
+    hostname: "localhost"
+    container_name: spark-worker
+    network_mode: "host"
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://3.215.139.148:7077
+    environment:
+      SPARK_CONF_DIR: /conf
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_WORKER_PORT: 8881
+      SPARK_WORKER_WEBUI_PORT: 8081

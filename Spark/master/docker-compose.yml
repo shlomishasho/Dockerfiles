@@ -1,0 +1,43 @@
+# spark master
+version: "3"
+services:
+  spark-master:
+    image: gettyimages/spark:latest 
+    hostname: "localhost"
+    container_name: spark-master
+    network_mode: "host"
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    environment:
+      MASTER: spark://23.20.172.60:7077
+      SPARK_CONF_DIR: /conf
+      SPARK_HOME: "${SPARK_HOME}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+  spark-worker:
+    image: gettyimages/spark:latest
+    hostname: "localhost"
+    container_name: spark-worker
+    network_mode: "host"
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://23.20.172.60:7077
+    environment:
+      SPARK_MASTER_HOST: "23.20.172.60"
+      SPARK_CONF_DIR: /conf
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_WORKER_PORT: 8881
+      SPARK_WORKER_WEBUI_PORT: 8081
+    depends_on:
+      - spark-master    
+ 
+ 
+  livy-server:
+    image: cloudiator/livy-server:latest 
+    network_mode: "host"
+    container_name: livy-server
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MASTER_ENDPOINT: 23.20.172.60
+      SPARK_MASTER_PORT: 7077
+      DEPLOY_MODE: "client"

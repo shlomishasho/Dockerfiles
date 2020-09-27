@@ -1,0 +1,14 @@
+version: '3'
+services:
+  database:
+    image: "postgres" # use latest official postgres version
+    network_mode: "host"
+    env_file:
+      - database.env # configure postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - "5433:5432"
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
